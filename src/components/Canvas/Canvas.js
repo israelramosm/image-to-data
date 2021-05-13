@@ -71,6 +71,11 @@ function App() {
       return color.join("");
     }
 
+    function rgbToHex(r, g, b) {
+      if (r > 255 || g > 255 || b > 255) throw "Invalid color component";
+      return ((r << 16) | (g << 8) | b).toString(16);
+    }
+
     if (canvasRef.current) {
       const renderCtx = canvasRef.current.getContext("2d");
 
@@ -92,12 +97,12 @@ function App() {
       }
     }
 
-    if (context) context.scale(10, 10)
+    if (context) context.scale(2, 2);
 
     // Draw a rectangle
     if (context) {
       context.fillStyle = "#ff7f50";
-      context.fillRect(5, 5, 5, 5);
+      context.fillRect(0, 0, 1, 1);
       context.fill();
       context.fillStyle = "#ffff50";
       context.fillRect(15, 15, 5, 5);
@@ -114,7 +119,24 @@ function App() {
       context.closePath();
     }
 
-    if (context) console.log(context.getImageData(0, 0, 100, 100));
+    if (context) {
+      const data = context.getImageData(0, 0, 2, 2).data;
+      console.log(data);
+      const rgb = [];
+      const hexData = [];
+      data.forEach((cur, idx) => {
+        let hex = "#";
+        rgb.push(cur);
+        if (rgb.length === 4) {
+          console.log(rgb);
+          hex = `#${rgbToHex(rgb[0], rgb[1], rgb[2])}`;
+          hexData.push(hex);
+          rgb.length = 0;
+        }
+      });
+
+      console.log({ hexData });
+    }
 
     // cleanUp
     return () => {
@@ -138,8 +160,8 @@ function App() {
         style={{
           border: "2px solid #000",
           marginTop: 10,
-          height: "90vh",
-          width: "90vw",
+          maxHeight: "90vh",
+          maxWidth: "90vw",
         }}
       ></canvas>
     </div>
