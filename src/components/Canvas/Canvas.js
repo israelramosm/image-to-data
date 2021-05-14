@@ -4,8 +4,9 @@ function App() {
   const canvasRef = useRef(null);
   const [context, setContext] = useState(null);
   // Set display size (vw/vh).
-  const sizeWidth = (80 * window.innerWidth) / 100,
-    sizeHeight = (100 * window.innerHeight) / 100 || 766;
+  const shapeSize = 5,
+    sizeWidth = shapeSize * 500,
+    sizeHeight = shapeSize * 500;
 
   useEffect(() => {
     let mouseDown = false;
@@ -97,15 +98,14 @@ function App() {
       }
     }
 
-    if (context) context.scale(2, 2);
+    // if (context) context.scale(scales, scales);
 
     // Draw a rectangle
     if (context) {
-      context.fillStyle = "#ff7f50";
-      context.fillRect(0, 0, 1, 1);
-      context.fill();
-      context.fillStyle = "#ffff50";
-      context.fillRect(15, 15, 5, 5);
+      for (let index = 0; index < 10000; index += 5) {
+        context.fillRect(index, index, shapeSize, shapeSize);
+        context.fillStyle = "#ff7f50";
+      }
       context.fill();
     }
 
@@ -124,7 +124,7 @@ function App() {
       console.log(data);
       const rgb = [];
       const hexData = [];
-      data.forEach((cur, idx) => {
+      data.forEach((cur) => {
         let hex = "#";
         rgb.push(cur);
         if (rgb.length === 4) {
@@ -152,6 +152,10 @@ function App() {
     <div
       style={{
         textAlign: "center",
+        width: "90vw",
+        height: "90vh",
+        overflow: "scroll",
+        margin: "20px auto",
       }}
     >
       <canvas
@@ -160,8 +164,8 @@ function App() {
         style={{
           border: "2px solid #000",
           marginTop: 10,
-          maxHeight: "90vh",
-          maxWidth: "90vw",
+          width: `${sizeWidth}px`,
+          height: `${sizeHeight}px`,
         }}
       ></canvas>
     </div>
