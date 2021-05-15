@@ -3,10 +3,14 @@ import React, { useEffect, useRef, useState } from "react";
 function App() {
   const canvasRef = useRef(null);
   const [context, setContext] = useState(null);
+
   // Set display size (vw/vh).
-  const shapeSize = 5,
-    sizeWidth = shapeSize * 500,
-    sizeHeight = shapeSize * 500;
+  const scale = 10,
+    shapeSize = 10,
+    sizeWidth = Math.floor(10 * shapeSize * scale),
+    sizeHeight = Math.floor(10 * shapeSize * scale);
+
+    console.log({ scale, shapeSize, sizeWidth, sizeHeight });
 
   useEffect(() => {
     let mouseDown = false;
@@ -79,12 +83,10 @@ function App() {
 
     if (canvasRef.current) {
       const renderCtx = canvasRef.current.getContext("2d");
-
-      //Setting the canvas site and width to be responsive
+      canvasRef.current.style.width = sizeWidth + "px";
+      canvasRef.current.style.height = sizeHeight + "px";
       canvasRef.current.width = sizeWidth;
       canvasRef.current.height = sizeHeight;
-      canvasRef.current.style.width = sizeWidth;
-      canvasRef.current.style.height = sizeHeight;
 
       if (renderCtx) {
         canvasRef.current.addEventListener("mousedown", handleMouseDown);
@@ -98,13 +100,14 @@ function App() {
       }
     }
 
-    // if (context) context.scale(scales, scales);
+    if (context) context.scale(scale, scale);
 
     // Draw a rectangle
     if (context) {
-      for (let index = 0; index < 10000; index += 5) {
-        context.fillRect(index, index, shapeSize, shapeSize);
-        context.fillStyle = "#ff7f50";
+      for (let index = 0; index < sizeHeight; index += shapeSize) {
+        context.fillRect(0, index, shapeSize, shapeSize);
+        context.fillRect(index, 0, shapeSize, shapeSize);
+        context.fillStyle = `#${randomColor()}`;
       }
       context.fill();
     }
@@ -113,7 +116,7 @@ function App() {
     if (context) {
       context.beginPath();
       context.fillStyle = "#ff7f50";
-      context.arc(60, 20, 20, 0, Math.PI * 2, true);
+      context.arc(40, 40, 20, 0, Math.PI * 2, true);
       context.fill();
       context.fillStyle = "#000";
       context.closePath();
@@ -121,14 +124,12 @@ function App() {
 
     if (context) {
       const data = context.getImageData(0, 0, 2, 2).data;
-      console.log(data);
       const rgb = [];
       const hexData = [];
       data.forEach((cur) => {
         let hex = "#";
         rgb.push(cur);
         if (rgb.length === 4) {
-          console.log(rgb);
           hex = `#${rgbToHex(rgb[0], rgb[1], rgb[2])}`;
           hexData.push(hex);
           rgb.length = 0;
@@ -164,8 +165,6 @@ function App() {
         style={{
           border: "2px solid #000",
           marginTop: 10,
-          width: `${sizeWidth}px`,
-          height: `${sizeHeight}px`,
         }}
       ></canvas>
     </div>
