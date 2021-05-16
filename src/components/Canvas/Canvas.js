@@ -1,36 +1,43 @@
 import React, { useEffect, useRef, useState } from "react";
 
+import pickachuPNG from "./pikachu.png";
+
 function App() {
   const canvasRef = useRef(null);
   const [context, setContext] = useState(null);
 
   // Set display size (vw/vh).
-  const scale = 10,
-    shapeSize = 10,
-    sizeWidth = Math.floor(10 * shapeSize * scale),
-    sizeHeight = Math.floor(10 * shapeSize * scale);
 
-    console.log({ scale, shapeSize, sizeWidth, sizeHeight });
+  const xSize = 540,
+    ySize = 360,
+    scale = 2, // Max scale 2
+    shapeSize = 1, // Max shape size 5
+    sizeWidth = Math.floor(xSize * shapeSize * scale),
+    sizeHeight = Math.floor(ySize * shapeSize * scale);
+
+  console.log({ scale, shapeSize, sizeWidth, sizeHeight });
 
   useEffect(() => {
     let mouseDown = false;
     let start = { x: 0, y: 0 };
     let end = { x: 0, y: 0 };
-    let canvasOffsetLeft = 0;
-    let canvasOffsetTop = 0;
+    let canvasOffsetLeft = xSize / 2;
+    let canvasOffsetTop = ySize / 2;
 
     function handleMouseDown(evt) {
       mouseDown = true;
 
       start = {
-        x: evt.clientX - canvasOffsetLeft,
-        y: evt.clientY - canvasOffsetTop,
+        x: Math.floor(evt.clientX / scale - canvasOffsetLeft),
+        y: Math.floor(evt.clientY / scale - canvasOffsetTop),
       };
 
       end = {
-        x: evt.clientX - canvasOffsetLeft,
-        y: evt.clientY - canvasOffsetTop,
+        x: Math.floor(evt.clientX / scale - canvasOffsetLeft),
+        y: Math.floor(evt.clientY / scale - canvasOffsetTop),
       };
+
+      // console.log("Mouse down", { start, end });
     }
 
     function handleMouseUp(evt) {
@@ -45,9 +52,11 @@ function App() {
         };
 
         end = {
-          x: evt.clientX - canvasOffsetLeft,
-          y: evt.clientY - canvasOffsetTop,
+          x: Math.floor(evt.clientX / scale - canvasOffsetLeft),
+          y: Math.floor(evt.clientY / scale - canvasOffsetTop),
         };
+
+        // console.log("Mouse move", { start, end });
 
         // Draw our path
         context.beginPath();
@@ -104,12 +113,24 @@ function App() {
 
     // Draw a rectangle
     if (context) {
-      for (let index = 0; index < sizeHeight; index += shapeSize) {
-        context.fillRect(0, index, shapeSize, shapeSize);
+      for (
+        let index = 0;
+        index < sizeWidth / scale - shapeSize;
+        index += shapeSize
+      ) {
         context.fillRect(index, 0, shapeSize, shapeSize);
         context.fillStyle = `#${randomColor()}`;
+        context.fill();
       }
-      context.fill();
+      for (
+        let index = 0;
+        index < sizeHeight / scale - shapeSize;
+        index += shapeSize
+      ) {
+        context.fillRect(0, index, shapeSize, shapeSize);
+        context.fillStyle = `#${randomColor()}`;
+        context.fill();
+      }
     }
 
     // Draw a circle
@@ -136,7 +157,10 @@ function App() {
         }
       });
 
-      console.log({ hexData });
+      // // console.log({ hexData });
+      // const imgPikachu = new Image();
+      // imgPikachu.src=pickachuPNG
+      // context.drawImage(imgPikachu, 0, 0);
     }
 
     // cleanUp
